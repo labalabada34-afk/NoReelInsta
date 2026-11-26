@@ -1,3 +1,5 @@
+name: Build NoReelInsta Dylib
+
 on:
   workflow_dispatch:
 
@@ -11,14 +13,20 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y fakeroot git perl clang llvm lld build-essential curl unzip
+          sudo apt-get install -y fakeroot git perl clang llvm lld build-essential curl unzip xz-utils
 
-      - name: Setup Theos and iOS SDK
+      - name: Setup Theos, Toolchain and iOS SDK
         run: |
-          git clone --recursive https://github.com ~/theos
-          curl -LO https://github.com
-          unzip master.zip
-          mv sdks-master/*.sdk ~/theos/sdks/
+          export THEOS=~/theos
+          git clone --depth=1 --recursive https://github.com $THEOS
+          
+          mkdir -p $THEOS/toolchain/linux/iphone
+          curl -L https://github.com -o toolchain.tar.xz || curl -L https://github.com -o toolchain.tar.xz
+          
+          mkdir -p $THEOS/sdks
+          curl -L https://github.com -o sdks.zip
+          unzip -q sdks.zip
+          mv sdks-master/*.sdk $THEOS/sdks/
 
       - name: Build Tweak
         env:
