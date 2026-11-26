@@ -6,15 +6,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/theos/theos:latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Install Theos and dependencies
-        run: |
-          sudo apt-get update && sudo apt-get install -y fakeroot
-          printf '\n\n\n\n' | bash -c "$(curl -fsSL https://raw.githubusercontent.com/theos/theos/master/bin/install-theos)"
-          echo "THEOS=$HOME/theos" >> $GITHUB_ENV
 
       - name: Build Tweak
         run: |
