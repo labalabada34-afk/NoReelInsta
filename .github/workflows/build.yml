@@ -13,8 +13,8 @@ jobs:
       - name: Install Theos and dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y fakeroot git perl clang llvm ldid dpkg-dev curl unzip
-          yes "" | bash -c "$(curl -fsSL https://raw.githubusercontent.com/theos/theos/master/bin/install-theos)"
+          sudo apt-get install -y fakeroot git perl clang llvm dpkg-dev xz-utils curl unzip
+          printf '\n\n\n\n' | bash -c "$(curl -fsSL https://raw.githubusercontent.com/theos/theos/master/bin/install-theos)"
           echo "THEOS=$HOME/theos" >> $GITHUB_ENV
 
       - name: Build Tweak
