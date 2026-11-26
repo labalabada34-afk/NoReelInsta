@@ -1,0 +1,39 @@
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fakeroot git perl clang llvm lld build-essential curl unzip
+
+      - name: Setup Theos and iOS SDK
+        run: |
+          git clone --recursive https://github.com ~/theos
+          curl -LO https://github.com
+          unzip master.zip
+          mv sdks-master/*.sdk ~/theos/sdks/
+
+      - name: Build Tweak
+        env:
+          THEOS: /home/runner/theos
+        run: |
+          make package THEOS_PACKAGE_SCHEME=rootless
+
+      - name: Extract Dylib
+        run: |
+          mkdir output
+          dpkg-deb -x packages/*.deb extracted
+          find extracted -name "*.dylib" -exec cp {} output/ \;
+
+      - name: Upload Dylib
+        uses: actions/upload-artifact@v4
+        with:
+          name: NoReelInsta-dylib
+          path: output/*.dylib
